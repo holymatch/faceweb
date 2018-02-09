@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
+    }
+}
+
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("com.fasterxml.jackson.core:jackson-databind")
+    compile("com.h2database:h2")
+    compile("org.springframework.boot:spring-boot-devtools")
+
+    compile("io.springfox:springfox-swagger2:2.6.1")
+    compile("io.springfox:springfox-swagger-ui:2.6.1")
+}
+
+jar {
+    baseName = 'gs-rest-service'
+    version =  '0.1.0'
+}
