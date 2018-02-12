@@ -2,6 +2,8 @@ package hk.hku.cs.faceweb.controller;
 
 
 import hk.hku.cs.faceweb.controller.response.JsonResponseMessage;
+import hk.hku.cs.faceweb.exception.ErrorRemoveFaceException;
+import hk.hku.cs.faceweb.exception.PersonNotFoundException;
 import hk.hku.cs.faceweb.model.Person;
 import hk.hku.cs.faceweb.service.PersonService;
 import org.slf4j.Logger;
@@ -39,6 +41,21 @@ public class PeopleController {
         return personService.findOne(id);
     }
 
+
+    @RequestMapping(value = "/people/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity deletePerson(@PathVariable Long id) throws PersonNotFoundException {
+        try {
+            Person person = personService.findOne(id);
+            if (person == null) {
+                throw new PersonNotFoundException("Person with id " + id + " cannot be found");
+            }
+            personService.delete(person);
+        } catch (ErrorRemoveFaceException ex) {
+            logger.error(ex.getMessage(),ex);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @RequestMapping(value = "/people", method = RequestMethod.POST)
     public ResponseEntity<JsonResponseMessage<Person>> createPerson(@RequestBody Person person) {
