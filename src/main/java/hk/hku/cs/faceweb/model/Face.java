@@ -14,7 +14,7 @@ public class Face {
     private String faceData;
     @ApiModelProperty(notes = "The identify id return from face engine after the face engine recognize the face.")
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @JsonProperty("Identify")
     private Long identify;
     @Transient

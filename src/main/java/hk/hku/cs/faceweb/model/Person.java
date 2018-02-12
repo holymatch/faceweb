@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class Person {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @ApiModelProperty(notes = "The database generated person ID")
     @JsonProperty("Id")
     private Long id;
