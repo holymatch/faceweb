@@ -1,5 +1,7 @@
 package hk.hku.cs.faceweb.controller;
 
+import hk.hku.cs.faceweb.controller.response.FaceJsonResponseMessage;
+import hk.hku.cs.faceweb.controller.response.JsonResponseMessage;
 import hk.hku.cs.faceweb.model.Face;
 import hk.hku.cs.faceweb.model.Person;
 import hk.hku.cs.faceweb.repository.PersonRepository;
