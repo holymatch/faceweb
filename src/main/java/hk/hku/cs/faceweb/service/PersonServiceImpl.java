@@ -3,6 +3,7 @@ package hk.hku.cs.faceweb.service;
 import hk.hku.cs.faceweb.controller.response.JsonResponseMessage;
 import hk.hku.cs.faceweb.exception.ErrorRemoveFaceException;
 import hk.hku.cs.faceweb.exception.ErrorStoreFaceException;
+import hk.hku.cs.faceweb.exception.PersonNotFoundException;
 import hk.hku.cs.faceweb.model.Person;
 import hk.hku.cs.faceweb.repository.PersonRepository;
 import org.slf4j.Logger;
@@ -44,6 +45,19 @@ public class PersonServiceImpl implements PersonService{
         }
         logger.debug("responsePerson: " + responsePerson);
         return person;
+    }
+
+    @Override
+    @Transactional
+    public Person update(Person person) throws ErrorStoreFaceException, PersonNotFoundException {
+        Person dbPerson = personRepository.findOne(person.getId());
+        if (dbPerson == null) {
+            throw new PersonNotFoundException("Person with id " + person.getId() + " not found.");
+        } else if(dbPerson.getFace().getFaceData().equals(person.getFace().getFaceData())){
+            return personRepository.save(person);
+        } else {
+            return save(person);
+        }
     }
 
     @Override
