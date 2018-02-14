@@ -56,7 +56,7 @@ public class Face {
     @Override
     public String toString() {
         return "Face{" +
-                "faceData='" + (faceData == null ? faceData: faceData.substring(0, 20) ) + '\'' +
+                "faceData='" + (faceData == null ? null: (faceData.length() > 20 ? faceData.substring(0, 20) : faceData) ) + '\'' +
                 ", identify=" + identify +
                 ", score=" + score +
                 '}';
