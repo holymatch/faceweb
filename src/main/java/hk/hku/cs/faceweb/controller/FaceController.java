@@ -14,12 +14,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 
 
 @RestController
@@ -41,6 +48,21 @@ public class FaceController {
     )
     public ResponseEntity<JsonResponseMessage<Person>> Recognize(@RequestBody Face face) {
         logger.trace("Face: " + face);
+        if (face.getFaceData()!= null) {
+            BufferedImage image = null;
+            try {
+                image = ImageIO.read( new ByteArrayInputStream(Base64Utils.decodeFromString(face.getFaceData())) );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (logger.isTraceEnabled()) {
+                try {
+                    ImageIO.write(image, "JPG", new File("filename.jpg"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JsonResponseMessage<Person>> response;
         try {
@@ -52,10 +74,11 @@ public class FaceController {
                     person.getFace().setScore(responseFace.getContent().getScore());
                     response = ResponseEntity.ok(new JsonResponseMessage<Person>(person, HttpStatus.OK.value(), "Recognized."));
                 } else {
-                    response = ResponseEntity.ok(new JsonResponseMessage<Person>(person, HttpStatus.NOT_FOUND.value(), "No matched face found."));
+                    response = ResponseEntity.ok(new JsonResponseMessage<Person>(person, HttpStatus.OK.value(), "No matched face found."));
                 }
             } else {
-                response = ResponseEntity.status(responseFace.getReturnCode()).body(new JsonResponseMessage<Person>(null, responseFace.getReturnCode(), responseFace.getMessage()));
+                //response = ResponseEntity.status(responseFace.getReturnCode()).body(new JsonResponseMessage<Person>(null, responseFace.getReturnCode(), responseFace.getMessage()));
+                response = ResponseEntity.status(HttpStatus.OK).body(new JsonResponseMessage<Person>(null, responseFace.getReturnCode(), responseFace.getMessage()));
             }
         } catch (ResourceAccessException ex) {
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new JsonResponseMessage<Person>(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Fail to connect face engine."));
