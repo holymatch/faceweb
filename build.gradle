@@ -17,7 +17,8 @@ def getVersionName = { ->
     return stdout.toString().trim()
 }
 
-version '1.0-SNAPSHOT'
+version getVersionName()
+group = 'hk.hku.cs'
 
 apply plugin: 'java'
 apply plugin: 'war'
@@ -58,7 +59,7 @@ compileJava {
 jar {
     baseName = 'faceweb'
     group    = "hk.hku.cs"
-    version =  getVersionName()
+    version =  "${version}"
     manifest { attributes "Main-Class": "hk.hku.cs.faceweb.Application" }
 }
 
