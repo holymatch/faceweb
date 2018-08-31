@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,10 @@ public class FaceController {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Value("${hk.hku.cs.faceengine.baseURL}")
+    private String faceEngineBaseURL;
+
 
     @RequestMapping(value = "/recognize", method = RequestMethod.POST, produces = "application/json", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Recognize a human face and return the peron information")
@@ -66,7 +71,7 @@ public class FaceController {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JsonResponseMessage<Person>> response;
         try {
-            JsonResponseMessage<Face> responseFace = restTemplate.postForObject("http://192.168.11.92:5002/recognize", face, FaceJsonResponseMessage.class);
+            JsonResponseMessage<Face> responseFace = restTemplate.postForObject(faceEngineBaseURL + "/recognize", face, FaceJsonResponseMessage.class);
             logger.debug("Person: " + responseFace);
             if (responseFace.getReturnCode() == 200) {
                 Person person = personRepository.findByFace(responseFace.getContent());
