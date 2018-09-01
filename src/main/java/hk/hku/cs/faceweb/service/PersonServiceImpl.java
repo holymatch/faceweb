@@ -9,6 +9,7 @@ import hk.hku.cs.faceweb.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +24,9 @@ public class PersonServiceImpl implements PersonService{
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Value("${hk.hku.cs.faceengine.baseURL}")
+    private String faceEngineBaseURL;
 
     @Override
     public List<Person> findAll() {
@@ -39,7 +43,7 @@ public class PersonServiceImpl implements PersonService{
     public Person save(Person person) throws ErrorStoreFaceException {
         person = personRepository.save(person);
         RestTemplate restTemplate = new RestTemplate();
-        JsonResponseMessage<Person> responsePerson = restTemplate.postForObject("http://192.168.11.92:5002/face", person.getFace(), JsonResponseMessage.class);
+        JsonResponseMessage<Person> responsePerson = restTemplate.postForObject(faceEngineBaseURL + "/face", person.getFace(), JsonResponseMessage.class);
         if (responsePerson.getReturnCode() != 200) {
             throw new ErrorStoreFaceException(responsePerson.getMessage());
         }
@@ -66,7 +70,7 @@ public class PersonServiceImpl implements PersonService{
         personRepository.delete(person);
         RestTemplate restTemplate = new RestTemplate();
         try {
-            restTemplate.delete("http://192.168.11.92:5002/face/" + person.getFace().getIdentify());
+            restTemplate.delete(faceEngineBaseURL + "/face/" + person.getFace().getIdentify());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new ErrorRemoveFaceException("Unable to remove face in face engine.");
