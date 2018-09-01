@@ -8,16 +8,6 @@ buildscript {
     }
 }
 
-def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
-version getVersionName()
 group = 'hk.hku.cs'
 
 apply plugin: 'java'
@@ -59,7 +49,6 @@ compileJava {
 jar {
     baseName = 'faceweb'
     group    = "hk.hku.cs"
-    version =  "${version}"
     manifest { attributes "Main-Class": "hk.hku.cs.faceweb.Application" }
 }
 
