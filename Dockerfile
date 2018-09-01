@@ -1,6 +1,7 @@
 FROM gradle:4.2.1-jdk8-alpine as build_faceweb
 WORKDIR /app
-COPY . /app
+USER root
+COPY --chown=gradle . /app
 RUN whoami && ls -al
 RUN gradle build --stacktrace \
   && cd /app/build/distributions \
