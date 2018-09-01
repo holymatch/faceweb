@@ -1,6 +1,7 @@
 FROM gradle:4.2.1-jdk8-alpine as build_faceweb
 WORKDIR /app
-COPY --chown=gradle . /app
+COPY . /app
+RUN whoami
 RUN gradle build \
   && cd /app/build/distributions \
   && tar -xf /app/build/distributions/faceweb.tar
